@@ -15,7 +15,7 @@ CREATE TABLE Inventory(id VARCHAR(10),
 CREATE Table Model(ModelNumber INTEGER, SalePrice INTEGER, Primary KEY (ModelNumber));
 
 
-Create Table User(ID INTEGER, Priviledge Varchar(30), LoginTime VARCHAR(30), LogoutTime VARCHAR(30), PRIMARY Key (ID));
+Create Table User(ID INTEGER, Priviledge Varchar(30), Password Varchar(30), LoginTime VARCHAR(30), LogoutTime VARCHAR(30), PRIMARY Key (ID));
 
 
 Create Table Customer(CustomerID INTEGER, FirstName VARCHAR(30), LastName VARCHAR(30), PRIMARY Key (CustomerID));

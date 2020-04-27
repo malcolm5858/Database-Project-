@@ -4,9 +4,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Customer {
-    final String url = "jdbc:postgresql://localhost:5432/grocery_store1";
-    final String user = "postgres";
-    final String password = "1234";
     private String name;
     private String id;
     private String customer;
@@ -16,7 +13,7 @@ public class Customer {
         String sql = "select first_name, last_name " + "from customer " + "where ID = ?";
         String sql2 = "select * " + "from customer " + "where ID = ?";
         String name = "";
-        try (Connection conn = DriverManager.getConnection(url, user, password);
+        try (Connection conn = DriverManager.getConnection(Constants.url, Constants.user, Constants.password);
                 PreparedStatement ps = conn.prepareStatement(sql);
                 PreparedStatement ps2 = conn.prepareStatement(sql2)) {
             ps.setString(1, this.id);

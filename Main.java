@@ -5,12 +5,8 @@ import javax.sql.*;
 
 public class Main {
     public static void main(String[] args) {
-        String username = "postgres";
-        String password = "1234";
-
         try {
-            Connection conn = DriverManager.getConnection("jdbc:postgresql://localhost:5432/pstgres", username,
-                    password);
+            Connection conn = DriverManager.getConnection(Constants.url, Constants.user, Constants.password);
             System.out.println("Connected to the PostgreSQL server successfully.");
 
         } catch (SQLException e) {
@@ -110,7 +106,7 @@ public class Main {
                 }
                 break;
         }
-        scanner.close();
+
         // Take the page that was picked and open that menu
         switch (pagePicked) {
             case 1:
@@ -149,7 +145,38 @@ public class Main {
     // Menu Item Functions
     // 1
     public static void createNewEmployee(User user) {
-
+        // Employee(EmployeeID INTEGER, FirstName Varchar(30), Lastname Varchar(30), SSN
+        // INTEGER, Salary FLOAT(4), PayType Varchar(30), jobType Varchar(30)
+        System.out.println("Creating a new employee");
+        System.out.println("Enter ID");
+        int empid = scanner.nextInt();
+        scanner.nextLine();
+        System.out.println("Enter First Name");
+        String fName = scanner.nextLine();
+        System.out.println("Enter Last Name");
+        String lName = scanner.nextLine();
+        System.out.println("Enter SSN");
+        String ssn = scanner.nextInt();
+        scanner.nextLine();
+        System.out.println("Enter Salary");
+        String salery = scanner.nextLine();
+        System.out.println("Enter Pay type");
+        String ptype = scanner.nextLine();
+        System.out.println("Enter Job Type");
+        String jtype = scanner.nextLine();
+        PreparedStatement pStmt = conn.prepareStatement("insert into Employee values(?,?,?,?,?,?,?)");
+        pStmt.SetInt(1, empid);
+        pStmt.SetString(2, fName);
+        pStmt.SetString(3, lName);
+        pStmt.SetInt(4, ssn);
+        pStmt.SetString(5, salery);
+        pStmt.SetString(6, ptype);
+        pStmt.SetString(7, jtype);
+        try {
+            pStmt.executeUpdate();
+        } catch (SQLException sqle) {
+            System.out.println("Could not insert employee");
+        }
     }
 
     // 2
@@ -164,12 +191,43 @@ public class Main {
 
     // 4
     public static void viewCustomer(User user) {
-
+        if (user.getPrivilege == "Admin")
+            stmt.executeQuery("select * from Customer");
+        else
+            stmt.executeQuery("select FirstName , LastName from Customer");
     }
 
     // 5
     public static void createOrder(User user) {
-
+        // Order CREATE TABLE Order(OrderNumber INTEGER, CustomerID INTEGER, EmployeeID
+        // INTEGER, Model INTEGER, SaleValue INTEGER,
+        System.out.println("Creating order");
+        System.out.println("Enter OrderNumber");
+        int ordnum = scanner.nextInt();
+        scanner.nextLine();
+        System.out.println("Enter CustomerID");
+        String custid = scanner.nextInt();
+        scanner.nextLine();
+        System.out.println("Enter EmployeeID");
+        String emplid = scanner.nextInt();
+        scanner.nextLine();
+        System.out.println("Enter Model");
+        String mod = scanner.nextInt();
+        scanner.nextLine();
+        System.out.println("Enter SaleValue");
+        String saleval = scanner.nextInt();
+        scanner.nextLine();
+        PreparedStatement pStmt = conn.prepareStatement("insert into Order values(?,?,?,?.?)");
+        pStmt.SetInt(1, ordnum);
+        pStmt.SetInt(2, custid);
+        pStmt.SetInt(3, emplid);
+        pStmt.SetInt(4, mod);
+        pStmt.SetInt(5, saleval);
+        try {
+            pStmt.executeUpdate();
+        } catch (SQLException sqle) {
+            System.out.println("Could not insert order");
+        }
     }
 
     // 6
@@ -179,11 +237,51 @@ public class Main {
 
     // 7
     public static void viewEmployee(User user) {
-
+          //Employee(EmployeeID INTEGER, FirstName Varchar(30), Lastname Varchar(30), SSN INTEGER, Salary FLOAT(4), PayType Varchar(30), jobType Varchar(30)
+        if (user.getPrivilege == "Admin"){
+            ResultSet rset = stmt.executeQuery("select * from Employee");
+            while(rset.next()){
+                System.out.println(System.out.println(rset.getInt(EmployeeID) + "  " + rset.getString("FirstName") + "  " + rset.getString("LastName")+ "  " 
+                + rset.getInt("SSN") + "  " + rset.getFloat("Salary")+ "  " +rset.getString("PayType")+ "  " +rset.getString("jobType"));
+            }
+        }
+        else
+            ResultSet rset = stmt.executeQuery("select FirstName , LastName from Employee");
+            while(rset.next()){
+                System.out.println(rset.getInt(EmployeeID) + "  " + rset.getString("FirstName") + "  " + rset.getString("LastName"));
     }
 
     // 8
     public static void AccessOrUpdateModel(User user) {
+        System.out.printn("Enter 1 for access or 2 for update");
+        int input = scanner.nextInt();
+        scanner.nextLine();
+
+        if(input == 1){
+            //CREATE Table Model(ModelNumber INTEGER, SalePrice INTEGER, Primary KEY (ModelNumber));
+            System.out.println("Accessing the Model data table");
+            ResultSet rset = stmt.executeQuery("select * from Model");
+            while(rset.next()){
+                System.out.println(rset.getInt("ModleNumber")+ "  " +rset.getInt("SalePrice"));
+            }
+            
+        }else if (input == 2){
+            System.out.println("Enter Model Number of a model you want to update");
+            int modid = scanner.nextInt();
+            scanner.nextLine();
+            PreparedStatement p = conn.prepareStatement("Update Model 
+                                                        Set SalePrice = ?
+                                                        where ModelNumber = ?");
+            System.out.println("Enter the new sale price");
+            int salep = scanner.nextInt();
+            p.setInt(1,modid);
+            p.setInt(2,salep);
+            p.executeUpdate();
+            scanner.nextLine();
+
+        }else{
+            System.out.println("Invalid input");
+        }
 
     }
 
@@ -197,4 +295,6 @@ public class Main {
         Login.logout(user);
         System.out.println("ERP program Shutting down");
     }
+
+    scanner.close();
 }

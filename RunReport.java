@@ -3,6 +3,6 @@ public class RunReport {
 
 }
 
-private void runReport(Sale sale){
+private void runReport(Order order){
     
 }
